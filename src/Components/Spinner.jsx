@@ -4,6 +4,9 @@ import './Spinner.css'
 export default class Spinner extends Component {
   render() {
     return (
-<div class="lds-hourglass"></div>    )
+      <div className="text-center">
+        <div className="lds-hourglass"></div>
+      </div>
+    )
   }
 }
