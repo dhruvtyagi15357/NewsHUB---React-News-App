@@ -18,25 +18,19 @@ export default class Navbar extends Component {
               <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" to="/">Home</Link>
               </li>
+              
+              {this.props.categories.map((e) => {
+                return (
+                  <li className='nav-item' key={e}>
+                    <Link className="nav-link active" to={`/${e}`}>{e[0].toUpperCase()+e.slice(1)}</Link>
+                  </li>
+                )
+              })
+              }
+
               <li className="nav-item">
                 <Link className="nav-link" to="./about">About</Link>
               </li>
-              <li className="nav-item dropdown">
-                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Category
-                </Link>
-                <ul className="dropdown-menu">
-                  {
-                    this.props.categories.map((e) => {
-                      return (
-                        <li key={e}><Link className="dropdown-item" to={`/${e}`}>{e}</Link></li>
-                      )
-                    })
-                  }
-                  {/* <li><hr className="dropdown-divider"/></li>
-                  <li><a className="dropdown-item" href="#">Something else here</a></li> */}
-                </ul>
-            </li>
             </ul>
           </div>
         </div>
