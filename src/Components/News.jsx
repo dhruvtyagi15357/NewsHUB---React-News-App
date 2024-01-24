@@ -3,7 +3,7 @@ import NewsItem from "./NewsItem";
 import "./Spinner.jsx";
 import Spinner from "./Spinner.jsx";
 import PropTypes from "prop-types";
-import sampleresponse from "../../sampleResponse.json";
+import sampleresponse from "./sampleResponse.json";
 export default class News extends Component {
   static defaultProps = {
     country: "in",
