@@ -3,7 +3,7 @@ import NewsItem from "./NewsItem";
 import "./Spinner.jsx";
 import Spinner from "./Spinner.jsx";
 import PropTypes from "prop-types";
-
+import sampleresponse from "../../sampleResponse.json";
 export default class News extends Component {
   static defaultProps = {
     country: "in",
@@ -45,7 +45,7 @@ export default class News extends Component {
     this.setState({ loading: true });
     try {
       let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=c3f9a26c882d473db649b4307afdca35&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
-      let data = await (await fetch(url)).json();
+      let data = sampleresponse;
       this.setState({ articles: data.articles, totalResults: data.totalResults});
     } catch (error) {
       console.error(error);
@@ -67,11 +67,8 @@ export default class News extends Component {
   render() {
     return (
       <div className="container my-3">
-        <h2
-          className="news-heading text-center tw-text-4xl"
-          style={{ margin: "35px 0px" }}
-        >
-          NewHUB - Top headlines - {this.state.page}
+        <h2 className="news-heading text-center tw-text-4xl"style={{ margin: "35px 0px" }}>
+          NewHUB - Top {this.props.category} headlines - Page {this.state.page}
         </h2>
         {this.state.loading && <Spinner />}
         <div className="row my-2">
