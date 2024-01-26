@@ -3,6 +3,7 @@ import NewsItem from "./NewsItem";
 import "./Spinner.jsx";
 import Spinner from "./Spinner.jsx";
 import PropTypes from "prop-types";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default class News extends Component {
   static defaultProps = {
@@ -23,6 +24,7 @@ export default class News extends Component {
       loading: false,
       page: 1,
       resultPerPage: props.pageSize,
+      totalResults: 0,
     };
   }
 
@@ -64,6 +66,13 @@ export default class News extends Component {
     this.update();
   };
 
+  fetchMoreData = async () => {
+    this.setState({ page: this.state.page + 1 });
+    let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=c3f9a26c882d473db649b4307afdca35&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
+    let data = await (await fetch(url)).json();
+    this.setState({ articles: this.state.articles.concat(data.articles), totalResults: data.totalResults});
+  }
+
   render() {
     return (
       <div className="container my-3">
@@ -73,27 +82,20 @@ export default class News extends Component {
         >
           NewHUB - Top {this.props.category} headlines - page {this.state.page}
         </h2>
-        {this.state.loading && <Spinner />}
+        {/* {this.state.loading && <Spinner />} */}
+        <InfiniteScroll
+          dataLength={this.state.articles.length}
+          next={this.fetchMoreData}
+          hasMore={this.state.articles.length !== this.state.totalResults}
+          loader={<Spinner/>}
+        >
         <div className="row my-2">
-          {!this.state.loading &&
-            this.state.articles.map((e) => {
+          {this.state.articles.map((e) => {
               return (
                 <div className="col-md-3" key={e.url}>
-                  <NewsItem
-                    title={
-                      e.title
-                        ? e.title.length > 45
-                          ? e.title.slice(0, 45) + "..."
-                          : e.title.slice(0, 45)
-                        : ""
-                    }
-                    desc={
-                      e.description
-                        ? e.description.length > 85
-                          ? e.description.slice(0, 85) + "..."
-                          : e.description.slice(0, 85)
-                        : ""
-                    }
+                  <NewsItem 
+                    title={ e.title ? e.title.length > 45 ? e.title.slice(0, 45) + "..." : e.title.slice(0, 45) : "" }
+                    desc={ e.description ? e.description.length > 85 ? e.description.slice(0, 85) + "..." : e.description.slice(0, 85) : "" }
                     newsurl={e.url}
                     imurl={
                       e.urlToImage
@@ -107,7 +109,9 @@ export default class News extends Component {
               );
             })}
         </div>
-        <div className="container d-flex justify-content-between">
+
+        </InfiniteScroll>
+        {/* <div className="container d-flex justify-content-between">
           <button
             disabled={this.state.page <= 1}
             type="button"
@@ -127,7 +131,7 @@ export default class News extends Component {
           >
             Next page
           </button>
-        </div>
+        </div> */}
       </div>
     );
   }
