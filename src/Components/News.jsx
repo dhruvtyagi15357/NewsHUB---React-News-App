@@ -25,6 +25,7 @@ export default class News extends Component {
       page: 1,
       resultPerPage: props.pageSize,
       totalResults: 0,
+      progress: 0,
     };
   }
 
