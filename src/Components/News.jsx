@@ -71,7 +71,7 @@ export default class News extends Component {
           className="news-heading text-center tw-text-4xl"
           style={{ margin: "35px 0px" }}
         >
-          NewHUB - Top headlines - {this.state.page}
+          NewHUB - Top {this.props.category} headlines - page {this.state.page}
         </h2>
         {this.state.loading && <Spinner />}
         <div className="row my-2">
