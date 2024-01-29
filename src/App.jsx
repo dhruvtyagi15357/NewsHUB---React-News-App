@@ -9,11 +9,17 @@ import LoadingBar from 'react-top-loading-bar'
 export default class App extends Component {
   name = 'Dhruv'
   // get the api key from .env.local file
-  api_key = import.meta.env.VITE_APP_API;
+  api_key = import.meta.env.VITE_APP_API_KEY;
+
   state = {
     categories: ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology'],
     progress: 0,
   };
+
+  constructor() {
+    super();
+    console.log(this.api_key)
+  }
 
   render() {
     
