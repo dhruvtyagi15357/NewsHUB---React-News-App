@@ -44,7 +44,7 @@ export default class News extends Component {
 
   fetchMoreData = async () => {
     this.setState({ page: this.state.page + 1 }, async () => {
-      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=c3f9a26c882d473db649b4307afdca35&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
+      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=${this.props.api_key}&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
   
       let data = await (await fetch(url)).json();
   
@@ -60,7 +60,7 @@ export default class News extends Component {
   async update() {
     this.setState({ loading: true });
     try {
-      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=c3f9a26c882d473db649b4307afdca35&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
+      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=${this.props.api_key}&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
       let data = await (await fetch(url)).json();
   
       // Filter out duplicate articles
