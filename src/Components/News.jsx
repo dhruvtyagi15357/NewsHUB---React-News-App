@@ -38,7 +38,27 @@ export default class News extends Component {
       prevProps.category !== this.props.category ||
       prevProps.country !== this.props.country
     ) {
-      this.update();
+      this.categoryUpdate()
+
+    }
+  }
+
+  async categoryUpdate() {
+    this.setState({ loading: true });
+    try {
+      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=${this.props.api_key}&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
+      let data = await (await fetch(url)).json();
+  
+      // Filter out duplicate articles
+      let newArticles = data.articles.filter((article) =>
+        !this.state.articles.find((a) => a.title === article.title)
+      );
+  
+      this.setState({ articles: newArticles, totalResults: data.totalResults, page: 1});
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
