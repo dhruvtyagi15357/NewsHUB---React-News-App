@@ -4,117 +4,111 @@ import "./Spinner.jsx";
 import Spinner from "./Spinner.jsx";
 import PropTypes from "prop-types";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useEffect } from "react";
 
-export default class News extends Component {
-  static defaultProps = {
-    country: "in",
-    pageSize: 8,
-    category: "general",
-  };
-  static propTypes = {
-    country: PropTypes.string,
-    pageSize: PropTypes.number,
-    category: PropTypes.string,
-  };
+const News = (props) => {
 
-  constructor(props) {
-    super();
-    this.state = {
-      articles: [],
-      loading: false,
-      page: 1,
-      resultPerPage: props.pageSize,
-      totalResults: 0,
-      progress: 0,
-    };
-  }
+  const [articles, setArticles] = React.useState([])
+  const [loading, setLoading] = React.useState(false)
+  const [page, setPage] = React.useState(1)
+  const [resultPerPage, setResultPerPage] = React.useState(props.pageSize)
+  const [totalResults, setTotalResults] = React.useState(0)
+  const [progress, setProgress] = React.useState(0)
 
-  componentDidMount() {
-    this.update()
-  }
+  // in order to use componentDidMount() in functional component,
+  // we use useEffect() hook
+  useEffect(() => {
+    document.title = `${props.category} - NewHUB`;
+    update()
+  }, [])
+  
+  useEffect(() => {
+    document.title = `${props.category} - NewHUB`;
+    categoryUpdate()
+  }, [props.category, props.country])
+  
 
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.category !== this.props.category ||
-      prevProps.country !== this.props.country
-    ) {
-      this.categoryUpdate()
-
-    }
-  }
-
-  async categoryUpdate() {
-    this.setState({ loading: true });
+  const categoryUpdate = async () => {
+    setLoading(true);
     try {
-      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=${this.props.api_key}&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
+      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.api_key}&pagesize=${resultPerPage}&page=${page}`;
       let data = await (await fetch(url)).json();
   
       // Filter out duplicate articles
       let newArticles = data.articles.filter((article) =>
-        !this.state.articles.find((a) => a.title === article.title)
+        !articles.find((a) => a.title === article.title)
       );
   
-      this.setState({ articles: newArticles, totalResults: data.totalResults, page: 1});
+      setArticles(newArticles)
+      setTotalResults(data.totalResults)
+      setPage(1)
+
     } catch (error) {
       console.error(error);
     } finally {
-      this.setState({ loading: false });
+      setLoading(false );
     }
   }
 
-  fetchMoreData = async () => {
-    this.setState({ page: this.state.page + 1 }, async () => {
-      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=${this.props.api_key}&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
-  
+  const update = async () => {
+    setLoading(true);
+    try { 
+      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.api_key}&pagesize=${resultPerPage}&page=${page}`;
       let data = await (await fetch(url)).json();
   
       // Filter out duplicate articles
       let newArticles = data.articles.filter((article) =>
-        !this.state.articles.find((a) => a.title === article.title)
+        !articles.find((a) => a.title === article.title)
       );
   
-      this.setState({ articles: this.state.articles.concat(newArticles), totalResults: data.totalResults });
-    });
-  }
-  
-  async update() {
-    this.setState({ loading: true });
-    try {
-      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${this.props.category}&apiKey=${this.props.api_key}&pagesize=${this.state.resultPerPage}&page=${this.state.page}`;
-      let data = await (await fetch(url)).json();
-  
-      // Filter out duplicate articles
-      let newArticles = data.articles.filter((article) =>
-        !this.state.articles.find((a) => a.title === article.title)
-      );
-  
-      this.setState({ articles: this.state.articles.concat(newArticles), totalResults: data.totalResults });
+      setArticles(articles.concat(newArticles))
+      setTotalResults(data.totalResults)
     } catch (error) {
       console.error(error);
     } finally {
-      this.setState({ loading: false });
+      setLoading(false);
     }
   }
 
-  render() {
+  const fetchMoreData = async () => {
+    setLoading(true);
+    setPage(page + 1)
+    try { 
+      let url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.api_key}&pagesize=${resultPerPage}&page=${page}`;
+      let data = await (await fetch(url)).json();
+  
+      // Filter out duplicate articles
+      let newArticles = data.articles.filter((article) =>
+        !articles.find((a) => a.title === article.title)
+      );
+  
+      setArticles(articles.concat(newArticles))
+      setTotalResults(data.totalResults)
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
     return (
       <div className="my-3" >
         <h2
           className="news-heading text-center tw-text-4xl"
           style={{ margin: "35px 0px" }}
         >
-          NewHUB - Top {this.props.category} headlines - page {this.state.page}
+          NewHUB - Top {props.category} headlines - page {page}
         </h2>
         <InfiniteScroll
-          dataLength={this.state.articles.length}
-          next={this.fetchMoreData}
-          hasMore={this.state.articles.length !== this.state.totalResults}
+          dataLength={articles.length}
+          next={fetchMoreData}
+          hasMore={articles.length !== totalResults}
           loader={<Spinner />}
           style={{overflow: 'hidden', alignItems: 'center', padding: '0cm 0cm 1cm 0cm'}}
         >
           <div className="container">
             <div className="row" >
-              {this.state.articles.map((e) => {
+              {articles.map((e) => {
                 return (
                   <div className="col-md-3" key={e.url} >
                     <NewsItem
@@ -138,4 +132,18 @@ export default class News extends Component {
       </div>
     );
   }
-}
+
+export default News;
+
+//proptypes and default props
+News.defaultProps = {
+  country: "in",
+  pageSize: 8,
+  category: "general",
+};
+
+News.propTypes = {
+  country: PropTypes.string,
+  pageSize: PropTypes.number,
+  category: PropTypes.string,
+};
